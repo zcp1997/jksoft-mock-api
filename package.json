@@ -1,0 +1,14 @@
+{
+  "name": "mock-api-platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm run -C backend dev\" \"pnpm run -C frontend dev\"",
+    "build": "concurrently \"pnpm run -C backend build\" \"pnpm run -C frontend build\"",
+    "start": "concurrently \"pnpm run -C backend start\" \"pnpm run -C frontend start\"",
+    "clean": "rimraf frontend/.next frontend/out frontend/dist"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "rimraf": "^5.0.0"
+  }
+}
