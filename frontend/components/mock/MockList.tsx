@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Copy, X, Search } from 'lucide-react';
 import { getMocksByProject, deleteMock, Mock } from '@/lib/api';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import MockForm from './MockForm';
 import { formatDate, getMockUrl } from '@/lib/utils';
@@ -232,32 +232,29 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
                 {!isEditing ? (
                   <>
                     <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <CardTitle className="font-mono text-xl">
-                          <span className={`px-2 py-1 rounded text-sm mr-2 ${mock.method === 'GET' ? 'bg-blue-100 text-blue-800' :
-                            mock.method === 'POST' ? 'bg-green-100 text-green-800' :
-                              mock.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
-                                mock.method === 'DELETE' ? 'bg-red-100 text-red-800' :
-                                  'bg-gray-100 text-gray-800'
-                            }`}>
-                            {mock.method}
-                          </span>
-                          {mock.path}
-                        </CardTitle>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <CardTitle className="font-mono text-xl mr-4">
+                            <span className={`px-2 py-1 rounded text-sm mr-2 ${mock.method === 'GET' ? 'bg-blue-100 text-blue-800' :
+                                mock.method === 'POST' ? 'bg-green-100 text-green-800' :
+                                  mock.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' :
+                                    mock.method === 'DELETE' ? 'bg-red-100 text-red-800' :
+                                      'bg-gray-100 text-gray-800'
+                              }`}>
+                              {mock.method}
+                            </span>
+                            {mock.path}
+                          </CardTitle>
 
-                        {statusCode && (
-                          <span className={`ml-2 px-2 py-1 rounded text-xs ${statusCode >= 200 && statusCode < 300 ? 'bg-green-100 text-green-800' :
-                            statusCode >= 400 ? 'bg-red-100 text-red-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                            {statusCode}
-                          </span>
-                        )}
+                          {mock.description && (
+                            <CardDescription>
+                              {mock.description}
+                            </CardDescription>
+                          )}
+                        </div>
                       </div>
-                      {mock.description && (
-                        <p className="text-sm text-gray-500 mt-1 font-mono">{mock.description}</p>
-                      )}
                     </CardHeader>
+
                     <CardContent>
                       <div className="mb-4">
                         <div className="flex items-center mb-2">
