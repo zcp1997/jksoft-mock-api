@@ -113,7 +113,7 @@ export default function ProjectDetailPage(): React.ReactElement {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="mocks" value={activeTab} onValueChange={setActiveTab} className="w-full">
+      {/* <Tabs defaultValue="mocks" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="mocks">Mock APIs</TabsTrigger>
           <TabsTrigger value="logs">Request Logs</TabsTrigger>
@@ -124,7 +124,9 @@ export default function ProjectDetailPage(): React.ReactElement {
         <TabsContent value="logs" className="mt-0">
           <LogList projectId={projectId} />
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
+
+      <MockList projectId={projectId} projectUrlSuffix={project.url_suffix} />
     </main>
   )
 }

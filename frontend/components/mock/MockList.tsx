@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Copy, X, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Copy, X, Search, AlertTriangle } from 'lucide-react';
 import { getMocksByProject, deleteMock, Mock } from '@/lib/api';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,14 @@ import MockForm from './MockForm';
 import { formatDate, getMockUrl } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Loading } from '@/components/ui/loading';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface MockListProps {
   projectId: string;
@@ -23,6 +31,8 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
   const [responseCopySuccess, setResponseCopySuccess] = useState<string | null>(null);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isClient, setIsClient] = useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [mockToDelete, setMockToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -48,14 +58,19 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
     }
   }, [projectId]);
 
-  const handleDelete = async (id: string): Promise<void> => {
-    if (!window.confirm('Are you sure you want to delete this mock API?')) {
-      return;
-    }
+  const confirmDelete = (id: string): void => {
+    setMockToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async (): Promise<void> => {
+    if (!mockToDelete) return;
 
     try {
-      await deleteMock(id);
-      setMocks(mocks.filter(mock => mock.id !== id));
+      await deleteMock(mockToDelete);
+      setMocks(mocks.filter(mock => mock.id !== mockToDelete));
+      setDeleteDialogOpen(false);
+      setMockToDelete(null);
     } catch (err) {
       setError('Failed to delete mock API. Please try again.');
       console.error(err);
@@ -159,6 +174,24 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
 
   return (
     <div>
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this mock API? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>  
+      </Dialog>
+      
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Mock APIs</h2>
         <Button onClick={() => setShowCreateForm(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white">
@@ -247,7 +280,7 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
                           </CardTitle>
 
                           {mock.description && (
-                            <CardDescription>
+                            <CardDescription className="text-lg text-gray-500 font-mono">
                               {mock.description}
                             </CardDescription>
                           )}
@@ -322,7 +355,7 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
                       <Button variant="outline" size="sm" onClick={() => setEditingMock(mock)}>
                         <Edit className="h-4 w-4 mr-1" /> Edit
                       </Button>
-                      <Button variant="destructive" size="sm" onClick={() => handleDelete(mock.id)}>
+                      <Button variant="destructive" size="sm" onClick={() => confirmDelete(mock.id)}>
                         <Trash2 className="h-4 w-4 mr-1" /> Delete
                       </Button>
                     </CardFooter>
