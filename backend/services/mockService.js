@@ -79,6 +79,21 @@ class MockService {
     
     return mock || null;
   }
+
+  async findMatchingMockWithProject(projectId, path, method) {
+    // 直接通过项目ID查询匹配的mock
+    const { data: mock, error: mockError } = await supabase
+      .from('mocks')
+      .select('*')
+      .eq('project_id', projectId)
+      .eq('path', path)
+      .eq('method', method.toUpperCase())
+      .single();
+    
+    if (mockError && mockError.code !== 'PGRST116') throw mockError;
+    
+    return mock || null;
+  }
 }
 
 module.exports = new MockService();

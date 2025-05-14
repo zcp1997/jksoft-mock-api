@@ -491,8 +491,16 @@ export default function LogList({ projectId = null }: LogListProps): React.React
                       <div className="flex items-start gap-2">
                         <Code className="h-4 w-4 text-gray-400 mt-0.5" />
                         <div>
-                          <div className="font-medium">Mock ID</div>
-                          <div className="font-mono text-xs truncate">{log.mock_id}</div>
+                          <div className="font-medium">Mock Description</div>
+                          <div className="text-xs truncate">
+                            {log.mocks?.description ? (
+                              <span className="flex items-center gap-1">
+                                {log.mocks?.description}
+                              </span>
+                            ) : (
+                              <span className="font-mono">{log.mock_id}</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -512,8 +520,10 @@ export default function LogList({ projectId = null }: LogListProps): React.React
                       <div className="flex items-start gap-2">
                         <Server className="h-4 w-4 text-gray-400 mt-0.5" />
                         <div>
-                          <div className="font-medium">Project ID</div>
-                          <div className="font-mono text-xs truncate">{log.project_id}</div>
+                          <div className="font-medium">Project Name</div>
+                          <div className="text-xs truncate">
+                            {log.projects?.name || log.project_id}
+                          </div>
                         </div>
                       </div>
                     )}

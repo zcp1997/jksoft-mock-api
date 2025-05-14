@@ -33,6 +33,13 @@ export interface Log {
   created_at?: string;
   ip_address?: string;
   user_agent?: string;
+  projects?: {
+    name: string;
+  };
+  mocks?: {
+    description?: string;
+    method: string;
+  };
 }
 
 export interface PaginatedResponse<T> {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mockService = require('../services/mockService');
 const logService = require('../services/logService');
+const projectService = require('../services/projectService');
 
 // 这个路由处理所有发送到mock接口的请求
 router.all('*', async (req, res) => {
@@ -34,8 +35,11 @@ router.all('*', async (req, res) => {
     console.log('projectUrlSuffix', projectUrlSuffix);
     console.log('apiPath', apiPath);
     
+    // 查找匹配的项目
+    const project = await projectService.getProjectByUrlSuffix(projectUrlSuffix);
+    
     // 查找匹配的mock
-    const mock = await mockService.findMatchingMock(projectUrlSuffix, apiPath, req.method);
+    const mock = project ? await mockService.findMatchingMockWithProject(project.id, apiPath, req.method) : null;
     
     // 记录日志
     const logData = {
@@ -46,7 +50,7 @@ router.all('*', async (req, res) => {
       matched: !!mock,
       status_code: mock ? 200 : 404,
       response_summary: mock ? { success: true } : { error: 'Mock not found' },
-      project_id: mock?.project_id,
+      project_id: project?.id,
       mock_id: mock?.id
     };
     

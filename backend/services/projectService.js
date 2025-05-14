@@ -52,6 +52,17 @@ class ProjectService {
     if (error) throw error;
     return { success: true };
   }
+
+  async getProjectByUrlSuffix(urlSuffix) {
+    const { data, error } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('url_suffix', urlSuffix)
+      .single();
+    
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
 }
 
 module.exports = new ProjectService();

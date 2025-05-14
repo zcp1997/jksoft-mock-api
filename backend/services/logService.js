@@ -50,7 +50,7 @@ class LogService {
     // Data query
     let dataQuery = supabase
       .from("logs")
-      .select("*, projects(name), mocks(path, method)")
+      .select("*, projects(name), mocks(description, method)")
       .order("timestamp", { ascending: false });
     
     // 根据matched状态智能应用projectId过滤
