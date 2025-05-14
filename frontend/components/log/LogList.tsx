@@ -185,16 +185,38 @@ export default function LogList({ projectId = null }: LogListProps): React.React
   }
 
   const handleFilterChange = (key: keyof FilterState, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: key === "projectId" && value === "all" ? null : value,
-    }))
+    if (key === "projectId") {
+      const projectIdValue = value === "all" ? null : value;
+      // 当选择了具体项目时，强制将matched设为null
+      if (projectIdValue) {
+        setFilters((prev) => ({
+          ...prev,
+          projectId: projectIdValue,
+          matched: null, // 强制设为null (All)
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          projectId: projectIdValue,
+        }));
+      }
+    } else {
+      // 如果已经选择了具体项目，不允许修改matched
+      if (key === "matched" && filters.projectId) {
+        return;
+      }
+      
+      setFilters((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    }
 
     // Reset to page 1 when filters change
     setPagination((prev) => ({
       ...prev,
       page: 1,
-    }))
+    }));
   }
 
   const handleDateRangeChange = (range: DateRange | undefined) => {
@@ -363,8 +385,8 @@ export default function LogList({ projectId = null }: LogListProps): React.React
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Status</label>
                   <Tabs
-                    defaultValue={filters.matched === null ? "all" : filters.matched ? "matched" : "unmatched"}
-                    className="w-full"
+                    value={filters.projectId ? "all" : (filters.matched === null ? "all" : filters.matched ? "matched" : "unmatched")}
+                    className={`w-full ${filters.projectId ? "opacity-70 pointer-events-none" : ""}`}
                     onValueChange={(value) => {
                       if (value === "all") handleFilterChange("matched", null)
                       else if (value === "matched") handleFilterChange("matched", true)
@@ -377,6 +399,11 @@ export default function LogList({ projectId = null }: LogListProps): React.React
                       <TabsTrigger value="unmatched">Unmatched</TabsTrigger>
                     </TabsList>
                   </Tabs>
+                  {filters.projectId && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Status selection is disabled when a specific project is selected.
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>

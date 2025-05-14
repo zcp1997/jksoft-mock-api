@@ -13,9 +13,15 @@ class LogService {
     // First get the count
     let countQuery = supabase.from("logs").select("*", { count: "exact", head: true });
     
-    // Apply filters to count query
+    // 根据matched状态智能应用projectId过滤
     if (filters.projectId && filters.projectId !== "all") {
-      countQuery = countQuery.eq("project_id", filters.projectId);
+      // 如果matched为false或未定义，则不应该基于projectId过滤，因为unmatched日志可能没有projectId
+      if (filters.matched === true) {
+        countQuery = countQuery.eq("project_id", filters.projectId);
+      } else {
+        // 对于matched=false或未指定时，使用or查询：projectId匹配或无projectId
+        countQuery = countQuery.or(`project_id.eq.${filters.projectId},project_id.is.null`);
+      }
     }
     
     // Fix for the matched parameter
@@ -47,9 +53,15 @@ class LogService {
       .select("*, projects(name), mocks(path, method)")
       .order("timestamp", { ascending: false });
     
-    // Apply filters to data query
+    // 根据matched状态智能应用projectId过滤
     if (filters.projectId && filters.projectId !== "all") {
-      dataQuery = dataQuery.eq("project_id", filters.projectId);
+      // 如果matched为false或未定义，则不应该基于projectId过滤，因为unmatched日志可能没有projectId
+      if (filters.matched === true) {
+        dataQuery = dataQuery.eq("project_id", filters.projectId);
+      } else {
+        // 对于matched=false或未指定时，使用or查询：projectId匹配或无projectId
+        dataQuery = dataQuery.or(`project_id.eq.${filters.projectId},project_id.is.null`);
+      }
     }
     
     // Fix for the matched parameter
@@ -76,6 +88,9 @@ class LogService {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
     dataQuery = dataQuery.range(from, to);
+    
+    // 添加调试日志
+    console.log("SQL Query:", dataQuery.toSQL ? dataQuery.toSQL() : "SQL unavailable");
     
     const { data, error } = await dataQuery;
     if (error) throw error;
