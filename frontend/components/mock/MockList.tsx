@@ -255,14 +255,14 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
                         )}
                       </div>
                       {mock.description && (
-                        <p className="text-sm text-gray-500 mt-1">{mock.description}</p>
+                        <p className="text-sm text-gray-500 mt-1 font-mono">{mock.description}</p>
                       )}
                     </CardHeader>
                     <CardContent>
                       <div className="mb-4">
                         <div className="flex items-center mb-2">
                           <span className="text-sm font-semibold">Full URL:</span>
-                          <code className="ml-2 text-sm bg-gray-100 px-2 py-1 rounded flex-1 truncate">
+                          <code className="ml-2 text-sm bg-gray-100 px-2 py-1 rounded flex-1 truncate font-mono">
                             {getMockUrl(projectUrlSuffix, mock.path)}
                           </code>
                           <Button
@@ -310,7 +310,7 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
                               )}
                             </button>
                           </div>
-                          <pre className="bg-gray-100 p-3 rounded-md text-xs overflow-auto max-h-40">
+                          <pre className="bg-gray-100 p-3 rounded-md text-xs overflow-auto max-h-40 font-mono">
                             {typeof mock.response_body === 'string'
                               ? mock.response_body
                               : JSON.stringify(mock.response_body, null, 2)}

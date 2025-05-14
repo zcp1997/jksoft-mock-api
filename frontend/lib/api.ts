@@ -181,6 +181,9 @@ export interface LogParams {
   matched?: boolean;
   page?: number;
   limit?: number;
+  keyword?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export async function getLogs(params: LogParams): Promise<PaginatedResponse<Log>> {
@@ -190,6 +193,13 @@ export async function getLogs(params: LogParams): Promise<PaginatedResponse<Log>
   if (params.matched !== undefined) queryParams.append('matched', String(params.matched));
   if (params.page) queryParams.append('page', String(params.page));
   if (params.limit) queryParams.append('limit', String(params.limit));
+  
+  // Add support for keyword search
+  if (params.keyword) queryParams.append('keyword', params.keyword);
+  
+  // Add support for date range
+  if (params.startDate) queryParams.append('startDate', params.startDate);
+  if (params.endDate) queryParams.append('endDate', params.endDate);
   
   const url = `${getApiUrl('/api/logs')}?${queryParams.toString()}`;
   
@@ -218,4 +228,47 @@ export async function getLogs(params: LogParams): Promise<PaginatedResponse<Log>
   }
   
   return data;
+}
+
+export async function getLogsExtended(params: LogParams): Promise<any> {
+  const queryParams = new URLSearchParams()
+
+  if (params.projectId) queryParams.append("projectId", params.projectId)
+  if (params.matched !== undefined) queryParams.append("matched", String(params.matched))
+  if (params.page) queryParams.append("page", String(params.page))
+  if (params.limit) queryParams.append("limit", String(params.limit))
+
+  // Add support for keyword search
+  if (params.keyword) queryParams.append("keyword", params.keyword)
+
+  // Add support for date range
+  if (params.startDate) queryParams.append("startDate", params.startDate)
+  if (params.endDate) queryParams.append("endDate", params.endDate)
+
+  const url = `${getApiUrl("/api/logs")}?${queryParams.toString()}`
+
+  const response = await fetch(url)
+  if (!response.ok) throw new Error("Failed to fetch logs")
+
+  const data = await response.json()
+
+  // If backend directly returns array, construct pagination response
+  if (Array.isArray(data)) {
+    return {
+      page: params.page || 1,
+      totalPages: 1,
+      total: data.length,
+      items: data,
+    }
+  }
+
+  // If backend returns logs instead of items, normalize the response
+  if (data.logs && !data.items) {
+    return {
+      ...data,
+      items: data.logs,
+    }
+  }
+
+  return data
 }

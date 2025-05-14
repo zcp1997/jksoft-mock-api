@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Plus, Edit, Trash2, ExternalLink, AlertCircle, FolderOpenDot, Info, Search, X } from "lucide-react"
+import { Plus, Edit, Trash2, AlertCircle, FolderOpenDot, Info, Search, X, SettingsIcon} from "lucide-react"
 import { getProjects, deleteProject, type Project } from "@/lib/api"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -265,7 +265,7 @@ export default function ProjectList(): React.ReactElement {
 
                   <Link href={`/projects/${project.id}`} passHref>
                     <Button size="sm" className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white">
-                      <ExternalLink className="h-3.5 w-3.5 mr-1" /> View
+                      <SettingsIcon className="h-3.5 w-3.5 mr-1" /> Settings
                     </Button>
                   </Link>
                 </div>
