@@ -89,9 +89,6 @@ class LogService {
     const to = from + limit - 1;
     dataQuery = dataQuery.range(from, to);
     
-    // 添加调试日志
-    console.log("SQL Query:", dataQuery.toSQL ? dataQuery.toSQL() : "SQL unavailable");
-    
     const { data, error } = await dataQuery;
     if (error) throw error;
     

@@ -257,7 +257,6 @@ export default function MockList({ projectId, projectUrlSuffix }: MockListProps)
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {filteredMocks.map(mock => {
-            const statusCode = getStatusCodeFromResponse(mock.response_body);
             const isEditing = editingMock && editingMock.id === mock.id;
 
             return (

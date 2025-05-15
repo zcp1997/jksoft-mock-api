@@ -8,10 +8,8 @@ import { ChevronLeft, Info } from "lucide-react"
 import { getProject, type Project } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import MockList from "@/components/mock/MockList"
-import LogList from "@/components/log/LogList"
 import { getMockBaseUrl } from "@/lib/utils"
 import { Loading } from "@/components/ui/loading"
 
@@ -20,7 +18,6 @@ export default function ProjectDetailPage(): React.ReactElement {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<string>("mocks")
 
   const projectId = params.id as string
 
@@ -112,19 +109,6 @@ export default function ProjectDetailPage(): React.ReactElement {
           </div>
         </CardContent>
       </Card>
-
-      {/* <Tabs defaultValue="mocks" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="mocks">Mock APIs</TabsTrigger>
-          <TabsTrigger value="logs">Request Logs</TabsTrigger>
-        </TabsList>
-        <TabsContent value="mocks" className="mt-0">
-          <MockList projectId={projectId} projectUrlSuffix={project.url_suffix} />
-        </TabsContent>
-        <TabsContent value="logs" className="mt-0">
-          <LogList projectId={projectId} />
-        </TabsContent>
-      </Tabs> */}
 
       <MockList projectId={projectId} projectUrlSuffix={project.url_suffix} />
     </main>

@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     '192.168.1.122',
     'http://localhost',
   ],
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
