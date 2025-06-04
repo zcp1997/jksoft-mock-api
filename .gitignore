@@ -39,9 +39,5 @@ next-env.d.ts
 *.swp
 *.swo
 
-# logs
-logs
-*.log
-
 # OS generated files
 Thumbs.db 
